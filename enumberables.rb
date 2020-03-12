@@ -54,19 +54,24 @@ module Enumerable
   end
 
   # my_map
-  def mymap
-    puts 'ok'
+  def my_map
+    length.times do |i|
+      self[i] = yield(self[i])
+    end
+    self
   end
 
   # my_inject
-  def my_inject
-    puts 'ok'
+  def my_inject(start)
+    puts('')
+    puts(start)
+    length.times do |i|
+      print(yield self[i])
+    end
   end
-
-
 end
 
-array = ['a', 'b', 'a', 'b']
+array = [1, 2, 3, 4]
 
-print(array.count { |item| item == 'a' })
-print(array.my_count { |item| item == 'a' })
+print(array.inject(3) { |result, element| result - element })
+array.my_inject(3) { |result, element| result - element }
