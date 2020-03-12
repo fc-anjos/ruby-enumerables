@@ -44,7 +44,13 @@ module Enumerable
   end
 
   def my_count
-    puts 'ok'
+    count = 0
+    length.times do |i|
+      condition = yield self[i]
+      next if !condition
+      count += 1
+    end
+    count
   end
 
   # my_map
@@ -60,7 +66,7 @@ module Enumerable
 
 end
 
-array = ['b', 'b', 'b', 'b']
+array = ['a', 'b', 'a', 'b']
 
 print(array.count { |item| item == 'a' })
-# print(array.my_none? { |item| item == 'a' })
+print(array.my_count { |item| item == 'a' })
