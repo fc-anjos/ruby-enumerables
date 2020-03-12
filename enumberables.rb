@@ -17,9 +17,7 @@ module Enumerable
     selected = []
     length.times do |i|
       condition = yield self[i]
-        if condition
-          selected.push(self[i])
-        end
+      selected.push(self[i]) if condition
     end
     selected
   end
@@ -34,41 +32,59 @@ module Enumerable
     true
   end
 
+  def my_any?
+    length.times do |i|
+      condition = yield self[i]
+      next unless condition
+
+      return true
+    end
+    false
+  end
+
   def my_none?
     length.times do |i|
       condition = yield self[i]
-      next if !condition
-      return false
+      next unless condition
+
+      return true
     end
-    true
+    false
   end
 
   def my_count
     count = 0
     length.times do |i|
       condition = yield self[i]
-      next if !condition
+      next unless condition
+
       count += 1
     end
     count
   end
 
   # my_map
-  def my_map
-    length.times do |i|
-      self[i] = yield(self[i])
+  def my_map(proc = nil)
+    unless proc.nil?
+      length.times do |i|
+        self[i] = proc.call(self[i])
+      end
+    end
+
+    if block_given?
+      length.times do |i|
+        self[i] = yield(self[i])
+      end
     end
     self
   end
 
-  # my_inject
-  def my_inject(*start)
-    if start.length == 1
-      start = start[0]
-      accumulated = yield(self[0], start)
-    else
-      accumulated = self[0]
-    end
+  def my_inject(start = nil)
+    accumulated = if start.nil?
+                    self[0]
+                  else
+                    yield(self[0], start)
+                  end
 
     length.times do |i|
       next if i.zero?
@@ -78,14 +94,10 @@ module Enumerable
     accumulated
   end
 
-  def multiply_els()
-    self.my_inject() { |result, element | result * element }
+  def multiply_els
+    my_inject { |result, element| result * element }
   end
-
 end
 
-array = [1, 2, 3, 4]
-
-puts(array.inject() { |result, element| result * element })
-# print(array.my_inject() { |result, element | result + element })
-puts(array.multiply_els())
+print([1,2,3,4,5,6].select { |n| n.even? })
+print([1,2,3,4,5,6].my_select { |n| n.even? })
