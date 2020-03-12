@@ -1,5 +1,4 @@
 module Enumerable
-
   def my_each
     length.times do |i|
       yield self[i]
@@ -98,6 +97,3 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
-
-print([1,2,3,4,5,6].select { |n| n.even? })
-print([1,2,3,4,5,6].my_select { |n| n.even? })
