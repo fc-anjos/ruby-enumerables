@@ -34,12 +34,13 @@ module Enumerable
     true
   end
 
-  def my_any?
-    puts 'ok'
-  end
-
-  def my_none
-    puts 'ok'
+  def my_none?
+    length.times do |i|
+      condition = yield self[i]
+      next if !condition
+      return false
+    end
+    true
   end
 
   def my_count
@@ -59,7 +60,7 @@ module Enumerable
 
 end
 
-array = ['a', 'a', 'a', 'a']
+array = ['b', 'b', 'b', 'b']
 
-print(array.all? { |item| item == 'a' })
-print(array.my_all? { |item| item == 'a' })
+print(array.count { |item| item == 'a' })
+# print(array.my_none? { |item| item == 'a' })
