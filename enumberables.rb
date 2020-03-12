@@ -62,16 +62,25 @@ module Enumerable
   end
 
   # my_inject
-  def my_inject(start)
-    puts('')
-    puts(start)
-    length.times do |i|
-      print(yield self[i])
+  def my_inject(*start)
+    if start.length == 1
+      start = start[0]
+      accumulated = yield(self[0], start)
+    else
+      accumulated = self[0]
     end
+
+    length.times do |i|
+      next if i.zero?
+
+      accumulated = yield(self[i], accumulated)
+    end
+    accumulated
   end
 end
 
 array = [1, 2, 3, 4]
 
-print(array.inject(3) { |result, element| result - element })
-array.my_inject(3) { |result, element| result - element }
+print(array.inject(0) { |result, element| result + element })
+puts
+print(array.my_inject(0) { |result, element| result + element })
