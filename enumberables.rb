@@ -77,10 +77,15 @@ module Enumerable
     end
     accumulated
   end
+
+  def multiply_els()
+    self.my_inject() { |result, element | result * element }
+  end
+
 end
 
 array = [1, 2, 3, 4]
 
-print(array.inject(0) { |result, element| result + element })
-puts
-print(array.my_inject(0) { |result, element| result + element })
+puts(array.inject() { |result, element| result * element })
+# print(array.my_inject() { |result, element | result + element })
+puts(array.multiply_els())
