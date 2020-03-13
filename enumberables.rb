@@ -9,9 +9,18 @@ module Enumerable
   end
 
   def my_each_with_index
-    length.times do |i|
-      yield self[i]
-      yield i
+    if block_given?
+      length.times do |i|
+        yield self[i]
+        yield i
+      end
+      self
+    else
+      elements = []
+      length.times do |i|
+        elements.push([self[i], i])
+      end
+      elements
     end
   end
 
@@ -106,9 +115,13 @@ array = [1, 1, 1, 1, 2]
 
 
 puts 'block given'
-puts(array.each {|i|})
-puts(array.my_each {|i|})
+print(array.each_with_index {|i|})
+puts ''
+print(array.my_each_with_index {|i|})
+
+puts ''
 
 puts 'block not given'
-puts(array.each)
-puts(array.my_each)
+print(array.each_with_index.to_a)
+puts ''
+print(array.my_each_with_index.to_a)
