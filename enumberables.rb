@@ -1,8 +1,15 @@
 module Enumerable
-  def args?(*args)
-    return true if args.length == 1
+  def has_args?(*args)
     raise 'Too many arguments, there should be only one!' if args.length > 1
+    return true unless args[0].nil?
 
+    false
+  end
+
+  def includes_not_nil_or_not_false?
+    length.times do |i|
+      true if self[i] != false || !self[i].nil?
+    end
     false
   end
 
@@ -21,12 +28,14 @@ module Enumerable
   end
 
   def my_all_class(expected_class)
+
     length.times do |i|
       next if self[i].is_a?(expected_class)
 
       return false
     end
     true
+
   end
 
   def my_all_regexp(expected_regexp)
@@ -54,7 +63,6 @@ module Enumerable
 
     my_all_pattern(argument)
   end
-
 end
 
 module Enumerable
@@ -93,8 +101,9 @@ module Enumerable
     end
     selected
   end
+
   def my_all?(*args)
-    return my_all_argument(args[0]) if args?(args)
+    return my_all_argument(args[0]) if has_args?(args)
 
     if block_given?
       length.times do |i|
@@ -112,18 +121,64 @@ module Enumerable
       true
     end
   end
-  # when no block or argument is given returns true if at least one of the collection is not false or nil
+
   # when a class is passed as an argument returns true if at least one of the collection is a member of such class
   # when a Regex is passed as an argument returns false if none of the collection matches the Regex
   # when a pattern other than Regex or a Class is given returns false if none of the collection matches the pattern
-  def my_any?
+  def my_any_argument(argument)
+    return my_any_regexp(argument) if argument.is_a?(Regexp)
+
+    return my_any_class(argument) if argument.is_a?(Class)
+
+    my_any_pattern(argument)
+  end
+
+  def my_any_regexp(expected_regexp)
     length.times do |i|
-      condition = yield self[i]
-      next unless condition
+      next unless self[i].match(expected_regexp)
 
       return true
     end
     false
+  end
+
+  def my_any_pattern(pattern)
+    length.times do |i|
+      next unless self[i] == pattern
+
+      return true
+    end
+    false
+  end
+
+  def my_any_class(expected_class)
+    length.times do |i|
+      next unless self[i].is_a?(expected_class)
+
+      return true
+    end
+    false
+  end
+
+  def my_any?(*args)
+    return my_any_argument(args[0]) if has_args?(args)
+
+
+    if block_given?
+      length.times do |i|
+        condition = yield self[i]
+        next unless condition
+
+        return true
+      end
+      false
+
+    elsif includes_not_nil_or_not_false?
+      true
+
+    else
+      true
+    end
   end
 
   # returns true if the block never returns true for all elements
@@ -192,17 +247,3 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
-
-array = [3, 3, 3]
-
-puts 'block given'
-print(array.all?(Float))
-puts ''
-print(array.my_all?(Float))
-puts ''
-
-# puts 'block not given'
-# print(array.all?)
-# puts ''
-
-# print(array.my_all?)
