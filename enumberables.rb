@@ -25,6 +25,7 @@ module Enumerable
   end
 
   def my_select
+    return self.to_enum unless block_given?
     selected = []
     length.times do |i|
       condition = yield self[i]
@@ -34,15 +35,34 @@ module Enumerable
   end
 
   def my_all?
-    return true unless block_given?
+    if block_given?
+      length.times do |i|
+        condition = yield self[i]
+        next if condition
 
-    length.times do |i|
-      condition = yield self[i]
-      next if condition
+        return false
+      end
+      true
 
-      return false
+    elsif has_nil?
+      false
+    else
+      true
     end
-    true
+  end
+
+  def has_nil?
+    length.times do |i|
+      return true if self[i] == false || self[i].nil?
+    end
+    false
+  end
+
+  def has_true?
+    length.times do |i|
+      return true if self[i] == true
+    end
+    false
   end
 
   def my_any?
@@ -111,17 +131,15 @@ module Enumerable
   end
 end
 
-array = [1, 1, 1, 1, 2]
 
+array = [1, 1, nil]
 
 puts 'block given'
-print(array.each_with_index {|i|})
+print(array.all? {|i| i == 1})
 puts ''
-print(array.my_each_with_index {|i|})
-
+print(array.my_all? {|i| i == 1})
 puts ''
-
 puts 'block not given'
-print(array.each_with_index.to_a)
+print(array.all?)
 puts ''
-print(array.my_each_with_index.to_a)
+print(array.my_all?)
