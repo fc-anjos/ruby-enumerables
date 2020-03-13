@@ -1,8 +1,11 @@
 module Enumerable
   def my_each
+    return self.to_enum unless block_given?
+
     length.times do |i|
-      yield self[i]
+      yield(self[i])
     end
+    self
   end
 
   def my_each_with_index
@@ -23,13 +26,14 @@ module Enumerable
 
   def my_all?
     return true unless block_given?
+
     length.times do |i|
       condition = yield self[i]
       next if condition
 
       return false
-    true
     end
+    true
   end
 
   def my_any?
@@ -63,7 +67,6 @@ module Enumerable
     count
   end
 
-  # my_map
   def my_map(proc = nil)
     unless proc.nil?
       length.times do |i|
@@ -99,13 +102,13 @@ module Enumerable
   end
 end
 
-array = [1, 1, 1, 1, 1]
+array = [1, 1, 1, 1, 2]
 
 
 puts 'block given'
-puts(array.all? {|i| i == 1})
-puts(array.my_all? {|i| i == 1})
+puts(array.each {|i|})
+puts(array.my_each {|i|})
 
 puts 'block not given'
-puts(array.all?)
-puts(array.my_all?)
+puts(array.each)
+puts(array.my_each)

@@ -1,5 +1,5 @@
 <!-- TITLE -->
-# Bubble sort 
+# Enumerables Methods 
 An implementation of the [enumerable methods](https://www.theodinproject.com/courses/ruby-programming/lessons/advanced-building-blocks) from Ruby, done in Ruby for learning purposes.
 
 ## Built With
