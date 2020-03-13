@@ -22,13 +22,14 @@ module Enumerable
   end
 
   def my_all?
+    return true unless block_given?
     length.times do |i|
       condition = yield self[i]
       next if condition
 
       return false
-    end
     true
+    end
   end
 
   def my_any?
@@ -97,3 +98,14 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
+
+array = [1, 1, 1, 1, 1]
+
+
+puts 'block given'
+puts(array.all? {|i| i == 1})
+puts(array.my_all? {|i| i == 1})
+
+puts 'block not given'
+puts(array.all?)
+puts(array.my_all?)
