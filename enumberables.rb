@@ -122,16 +122,12 @@ module Enumerable
     end
   end
 
-  # when a class is passed as an argument returns true if at least one of the collection is a member of such class
-  # when a Regex is passed as an argument returns false if none of the collection matches the Regex
-  # when a pattern other than Regex or a Class is given returns false if none of the collection matches the pattern
   def my_any_argument(argument)
     return my_any_regexp(argument) if argument.is_a?(Regexp)
 
     return my_any_class(argument) if argument.is_a?(Class)
 
-    my_any_pattern(argument)
-  end
+    my_any_pattern(argument) end
 
   def my_any_regexp(expected_regexp)
     length.times do |i|
@@ -247,3 +243,4 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
+
