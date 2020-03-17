@@ -127,7 +127,8 @@ module Enumerable
 
     return my_any_class(argument) if argument.is_a?(Class)
 
-    my_any_pattern(argument) end
+    my_any_pattern(argument)
+  end
 
   def my_any_regexp(expected_regexp)
     length.times do |i|
@@ -192,14 +193,31 @@ module Enumerable
     false
   end
 
-  # returns the number of items in enum through enumeration
   # counts the number of items in enum that are equal to item if an argument is given:
-  def my_count
+  def my_count(*args)
+    return my_count_argument(args[0]) if has_args?(args)
+
     count = 0
     length.times do |i|
       condition = yield self[i]
       next unless condition
 
+      count += 1
+    end
+    count
+  end
+
+  def my_count_argument(argument)
+    count = 0
+    length.times do |i|
+      case argument
+      when Class
+        next unless self[i].is_a?(argument)
+      when Regexp
+        next unless self[i].match(argument)
+      else
+        next unless self[i] == argument
+      end
       count += 1
     end
     count
@@ -244,3 +262,6 @@ module Enumerable
   end
 end
 
+a = [1, 2, 3, 4]
+p a.count(1)
+p a.my_count(1)
