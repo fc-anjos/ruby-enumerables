@@ -1,5 +1,5 @@
 module Enumerable
-  def has_args?(*args)
+  def args?(*args)
     raise 'Too many arguments, there should be only one!' if args.length > 1
     return true unless args[0].nil?
 
@@ -27,41 +27,19 @@ module Enumerable
     false
   end
 
-  def my_all_class(expected_class)
-
-    length.times do |i|
-      next if self[i].is_a?(expected_class)
-
-      return false
-    end
-    true
-
-  end
-
-  def my_all_regexp(expected_regexp)
-    length.times do |i|
-      next if self[i].match(expected_regexp)
-
-      return false
-    end
-    true
-  end
-
-  def my_all_pattern(pattern)
-    length.times do |i|
-      next if self[i] == pattern
-
-      return false
-    end
-    true
-  end
-
   def my_all_argument(argument)
-    return my_all_regexp(argument) if argument.is_a?(Regexp)
-
-    return my_all_class(argument) if argument.is_a?(Class)
-
-    my_all_pattern(argument)
+    length.times do |i|
+      case argument
+      when Class
+        next if self[i].is_a?(argument)
+      when Regexp
+        next if self[i].match(argument)
+      else
+        next if self[i] == argument
+      end
+      return false
+    end
+    true
   end
 end
 
@@ -121,7 +99,8 @@ module Enumerable
       true
     end
   end
-
+end
+module Enumerable
   def my_any_argument(argument)
     length.times do |i|
       case argument
@@ -137,36 +116,8 @@ module Enumerable
     false
   end
 
-  def my_any_regexp(expected_regexp)
-    length.times do |i|
-      next unless self[i].match(expected_regexp)
-
-      return true
-    end
-    false
-  end
-
-  def my_any_pattern(pattern)
-    length.times do |i|
-      next unless self[i] == pattern
-
-      return true
-    end
-    false
-  end
-
-  def my_any_class(expected_class)
-    length.times do |i|
-      next unless self[i].is_a?(expected_class)
-
-      return true
-    end
-    false
-  end
-
   def my_any?(*args)
     return my_any_argument(args[0]) if has_args?(args)
-
 
     if block_given?
       length.times do |i|
@@ -217,7 +168,6 @@ module Enumerable
   end
 
   def my_count_argument(argument)
-
     count = 0
     length.times do |i|
       case argument
@@ -231,22 +181,19 @@ module Enumerable
       count += 1
     end
     count
-
   end
 
-  # returns an enumerator if no block is Given
-  # returns a new array with the results of running block once for every element in enum.
   def my_map(proc = nil)
+    return to_enum unless block_given?
+
     unless proc.nil?
       length.times do |i|
-        # self[i] = proc.call(self[i])
+        self[i] = proc.call(self[i])
       end
     end
 
-    if block_given?
-      length.times do |i|
-        self[i] = yield(self[i])
-      end
+    length.times do |i|
+      self[i] = yield(self[i])
     end
     self
   end
@@ -254,6 +201,7 @@ module Enumerable
   # When a symbol is specified combines each element of the collection by applying the symbol as a named method
   # Combines all elements of enum by applying a binary operation, specified by a block:
   def my_inject(start = nil)
+    print self
     accumulated = if start.nil?
                     self[0]
                   else
@@ -261,8 +209,7 @@ module Enumerable
                   end
 
     length.times do |i|
-      next if i.zero?
-
+      puts (self[i])
       accumulated = yield(self[i], accumulated)
     end
     accumulated
@@ -273,6 +220,6 @@ module Enumerable
   end
 end
 
-a = ['a']
-p a.any?(Integer)
-p a.my_any?(Integer)
+a = [1, 2, 3]
+p(a.inject(1) {|i| i + 1})
+p(a.my_inject(1) {|i| i + 1})
