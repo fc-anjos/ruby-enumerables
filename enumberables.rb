@@ -200,17 +200,19 @@ module Enumerable
 
   # When a symbol is specified combines each element of the collection by applying the symbol as a named method
   # Combines all elements of enum by applying a binary operation, specified by a block:
-  def my_inject(start = nil)
-    print self
+  def my_inject(start = nil, symbol = nil, &block)
+    block = symbol.to_proc if symbol.is_a?(Symbol)
+
     accumulated = if start.nil?
                     self[0]
                   else
-                    yield(self[0], start)
+                    block.yield(start, self[0])
                   end
 
     length.times do |i|
-      puts (self[i])
-      accumulated = yield(self[i], accumulated)
+      next if i.zero?
+
+      accumulated = block.yield(accumulated, self[i])
     end
     accumulated
   end
@@ -220,6 +222,6 @@ module Enumerable
   end
 end
 
-a = [1, 2, 3]
-p(a.inject(1) {|i| i + 1})
-p(a.my_inject(1) {|i| i + 1})
+a = [2, 2, 2, 3]
+p a.my_inject(2, :*)
+p a.inject(2, :*)
