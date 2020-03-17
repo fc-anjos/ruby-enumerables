@@ -123,11 +123,18 @@ module Enumerable
   end
 
   def my_any_argument(argument)
-    return my_any_regexp(argument) if argument.is_a?(Regexp)
-
-    return my_any_class(argument) if argument.is_a?(Class)
-
-    my_any_pattern(argument)
+    length.times do |i|
+      case argument
+      when Class
+        next unless self[i].is_a?(argument)
+      when Regexp
+        next unless self[i].match(argument)
+      else
+        next unless self[i] == argument
+      end
+      return true
+    end
+    false
   end
 
   def my_any_regexp(expected_regexp)
@@ -197,17 +204,20 @@ module Enumerable
   def my_count(*args)
     return my_count_argument(args[0]) if has_args?(args)
 
-    count = 0
-    length.times do |i|
-      condition = yield self[i]
-      next unless condition
+    if block_given?
+      count = 0
+      length.times do |i|
+        condition = yield self[i]
+        next unless condition
 
-      count += 1
+        count += 1
+      end
     end
     count
   end
 
   def my_count_argument(argument)
+
     count = 0
     length.times do |i|
       case argument
@@ -221,6 +231,7 @@ module Enumerable
       count += 1
     end
     count
+
   end
 
   # returns an enumerator if no block is Given
@@ -262,6 +273,6 @@ module Enumerable
   end
 end
 
-a = [1, 2, 3, 4]
-p a.count(1)
-p a.my_count(1)
+a = ['a']
+p a.any?(Integer)
+p a.my_any?(Integer)
