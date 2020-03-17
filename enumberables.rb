@@ -1,7 +1,7 @@
 module Enumerable
   def args?(*args)
     raise 'Too many arguments, there should be only one!' if args.length > 1
-    return true unless args[0].nil?
+    return true unless args[0].empty?
 
     false
   end
@@ -81,7 +81,7 @@ module Enumerable
   end
 
   def my_all?(*args)
-    return my_all_argument(args[0]) if has_args?(args)
+    return my_all_argument(args[0]) if args?(args)
 
     if block_given?
       length.times do |i|
@@ -117,11 +117,11 @@ module Enumerable
   end
 
   def my_any?(*args)
-    return my_any_argument(args[0]) if has_args?(args)
+    return my_any_argument(args[0]) if args?(args)
 
     if block_given?
       length.times do |i|
-        condition = yield self[i]
+        condition = yield(self[i])
         next unless condition
 
         return true
@@ -136,24 +136,8 @@ module Enumerable
     end
   end
 
-  # returns true if the block never returns true for all elements
-  # When no block or argument is given returns true only if none of the collection members is true
-  # When a pattern other than Regex or a Class is given returns true only if none of the collection matches the pattern
-  # When a class is passed as an argument returns true if none of the collection is a member of such class
-  # when a Regex is passed as an argument returns true only if none of the collection matches the Regex
-  def my_none?
-    length.times do |i|
-      condition = yield self[i]
-      next unless condition
-
-      return true
-    end
-    false
-  end
-
-  # counts the number of items in enum that are equal to item if an argument is given:
   def my_count(*args)
-    return my_count_argument(args[0]) if has_args?(args)
+    return my_count_argument(args[0]) if args?(args)
 
     if block_given?
       count = 0
@@ -198,8 +182,6 @@ module Enumerable
     self
   end
 
-  # When a symbol is specified combines each element of the collection by applying the symbol as a named method
-  # Combines all elements of enum by applying a binary operation, specified by a block:
   def my_inject(start = nil, symbol = nil, &block)
     block = symbol.to_proc if symbol.is_a?(Symbol)
 
@@ -222,6 +204,39 @@ module Enumerable
   end
 end
 
-a = [2, 2, 2, 3]
-p a.my_inject(2, :*)
-p a.inject(2, :*)
+module Enumerable
+  def my_none_argument(argument)
+    length.times do |i|
+      case argument
+      when Class
+        next unless self[i].is_a?(argument)
+      when Regexp
+        next unless self[i].match(argument)
+      else
+        next unless self[i] == argument
+      end
+      return false
+    end
+    true
+  end
+
+  def my_none?(*args)
+    return my_none_argument(args[0]) if args?(args)
+
+    if block_given?
+      length.times do |i|
+        condition = yield(self[i])
+        next unless condition
+
+        return false
+      end
+      true
+
+    elsif includes_not_nil_or_not_false?
+      false
+
+    else
+      true
+    end
+  end
+end
