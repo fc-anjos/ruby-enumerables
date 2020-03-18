@@ -54,11 +54,18 @@ module Enumerable
   end
 
   def my_each_with_index
-    return to_enum unless block_given?
-    length.times do |i, idx|
-      yield self[i], i
+    if block_given?
+      length.times do |i|
+        yield self[i], i
+      end
+      self
+    else
+      a = []
+      length.times do |i|
+        a.push [self[i], i]
     end
-    self
+      return a.to_enum
+    end
   end
 
   def my_select
@@ -234,7 +241,7 @@ module Enumerable
 end
 
 
-%w[a, b, c].my_each_with_index { |i, idx| p "#{i} is at index #{idx}"}
+p %w[a, b, c].my_each_with_index.to_a
 puts ''
-%w[a, b, c].each_with_index { |i, idx| p "#{i} is at index #{idx}"}
+p %w[a, b, c].each_with_index.to_a
 
