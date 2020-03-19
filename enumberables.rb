@@ -22,9 +22,9 @@ module Enumerable
 
   def includes_true?
     length.times do |i|
-      return true if self[i] == true
+      return true if self[i]
     end
-    false
+    return false
   end
 
   def my_all_argument(argument)
@@ -91,9 +91,8 @@ module Enumerable
       end
       true
 
-    elsif includes_nil_or_false?
-      false
-
+    elsif includes_true?
+      return true
     else
       true
     end
@@ -127,11 +126,11 @@ module Enumerable
       end
       false
 
-    elsif includes_not_nil_or_not_false?
+    elsif includes_true?
       true
 
     else
-      true
+      false
     end
   end
 
@@ -146,6 +145,7 @@ module Enumerable
 
         count += 1
       end
+      # return self.length or another way of getting the number of elements
     end
     count
   end
@@ -167,6 +167,7 @@ module Enumerable
   end
 
   def my_map(proc = nil)
+    # create a new array and append the result of proc to it
     return to_enum unless block_given?
 
     unless proc.nil?
@@ -182,6 +183,7 @@ module Enumerable
   end
 
   def my_inject(start = nil, symbol = nil, &block)
+    # Do a self.to_a before going on. Maybe check if it as range before?
     block = symbol.to_proc if symbol.is_a?(Symbol)
 
     accumulated = if start.nil?
@@ -193,8 +195,7 @@ module Enumerable
     length.times do |i|
       next if i.zero?
 
-      accumulated = block.yield(accumulated, self[i])
-    end
+      accumulated = block.yield(accumulated, self[i]) end
     accumulated
   end
 
@@ -231,7 +232,7 @@ module Enumerable
       end
       true
 
-    elsif includes_not_nil_or_not_false?
+    elsif includes_true?
       false
 
     else
@@ -240,8 +241,8 @@ module Enumerable
   end
 end
 
-
-p %w[a, b, c].my_each_with_index.to_a
+# my_count is returning nil instead of the number of elements in the enum when no block or argument is given.
+a = [true, false, false]
+p a.my_none?
 puts ''
-p %w[a, b, c].each_with_index.to_a
-
+p a.none?
