@@ -142,10 +142,11 @@ module Enumerable
       length.times do |i|
         condition = yield self[i]
         next unless condition
-
         count += 1
       end
-      # return self.length or another way of getting the number of elements
+
+    else
+      return self.length
     end
     count
   end
@@ -242,7 +243,8 @@ module Enumerable
 end
 
 # my_count is returning nil instead of the number of elements in the enum when no block or argument is given.
-a = [true, false, false]
-p a.my_none?
-puts ''
-p a.none?
+
+a = [1, 2, 3]
+
+p a.count
+p a.my_count
