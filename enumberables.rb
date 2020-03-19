@@ -182,19 +182,25 @@ module Enumerable
   end
 
   def my_inject(start = nil, symbol = nil, &block)
-    # Do a self.to_a before going on. Maybe check if it as range before?
+
+    array = if is_a?(Range)
+              to_a
+            else
+              self
+            end
+
     block = symbol.to_proc if symbol.is_a?(Symbol)
 
     accumulated = if start.nil?
-                    self[0]
+                    array[0]
                   else
-                    block.yield(start, self[0])
+                    block.yield(start, array[0])
                   end
 
-    length.times do |i|
+    array.length.times do |i|
       next if i.zero?
 
-      accumulated = block.yield(accumulated, self[i])
+      accumulated = block.yield(accumulated, array[i])
     end
     accumulated
   end
@@ -244,6 +250,4 @@ end
 
 a = [1, 2, 3]
 
-p (a.map { |i| i + i })
-puts ''
-p (a.my_map { |i| i + i })
+
