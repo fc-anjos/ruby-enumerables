@@ -137,16 +137,14 @@ module Enumerable
   def my_count(*args)
     return my_count_argument(args[0]) if args?(args)
 
-    if block_given?
-      count = 0
-      length.times do |i|
-        condition = yield self[i]
-        next unless condition
-        count += 1
-      end
+    return self.length unless block_given?
 
-    else
-      return self.length
+    count = 0
+    length.times do |i|
+      condition = yield self[i]
+      next unless condition
+
+      count += 1
     end
     count
   end
@@ -168,19 +166,19 @@ module Enumerable
   end
 
   def my_map(proc = nil)
-    # create a new array and append the result of proc to it
     return to_enum unless block_given?
 
+    array = []
     unless proc.nil?
       length.times do |i|
-        self[i] = proc.call(self[i])
+        array.push proc.call(self[i])
       end
     end
 
     length.times do |i|
-      self[i] = yield(self[i])
+      array.push yield(self[i])
     end
-    self
+    array
   end
 
   def my_inject(start = nil, symbol = nil, &block)
@@ -196,7 +194,8 @@ module Enumerable
     length.times do |i|
       next if i.zero?
 
-      accumulated = block.yield(accumulated, self[i]) end
+      accumulated = block.yield(accumulated, self[i])
+    end
     accumulated
   end
 
@@ -204,7 +203,6 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
-
 module Enumerable
   def my_none_argument(argument)
     length.times do |i|
@@ -246,5 +244,6 @@ end
 
 a = [1, 2, 3]
 
-p a.count
-p a.my_count
+p (a.map { |i| i + i })
+puts ''
+p (a.my_map { |i| i + i })
