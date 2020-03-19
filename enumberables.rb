@@ -106,7 +106,6 @@ module Enumerable
   end
 end
 
-
 module Enumerable
   def my_any_argument(argument)
     length.times do |i|
