@@ -24,7 +24,14 @@ module Enumerable
     length.times do |i|
       return true if self[i]
     end
-    return false
+    false
+  end
+
+  def only_true?
+    length.times do |i|
+      return false unless self[i]
+    end
+    true
   end
 
   def my_all_argument(argument)
@@ -63,8 +70,8 @@ module Enumerable
       a = []
       length.times do |i|
         a.push [self[i], i]
-    end
-      return a.to_enum
+      end
+      a.to_enum
     end
   end
 
@@ -91,13 +98,15 @@ module Enumerable
       end
       true
 
-    elsif includes_true?
-      return true
-    else
+    elsif only_true?
       true
+    else
+      false
     end
   end
 end
+
+
 module Enumerable
   def my_any_argument(argument)
     length.times do |i|
@@ -137,7 +146,7 @@ module Enumerable
   def my_count(*args)
     return my_count_argument(args[0]) if args?(args)
 
-    return self.length unless block_given?
+    return length unless block_given?
 
     count = 0
     length.times do |i|
@@ -181,28 +190,25 @@ module Enumerable
     array
   end
 
+  def my_inject_check_arguments(start, symbol, array)
+    raise TypeError, " #{start} is not a Symbol nor a String" unless (start.is_a?(Symbol) || start.is_a?(String)) ||
+                                                                     (symbol.is_a?(Symbol) || symbol.is_a?(String))
+
+    return array unless array.is_a?(Range)
+
+    array.to_a
+  end
+
   def my_inject(start = nil, symbol = nil, &block)
-
-    array = if is_a?(Range)
-              to_a
-            else
-              self
-            end
-
+    block = start.to_proc if start.is_a?(Symbol)
     block = symbol.to_proc if symbol.is_a?(Symbol)
-
-    accumulated = if start.nil?
-                    array[0]
-                  else
-                    block.yield(start, array[0])
-                  end
+    start = symbol if start.is_a?(Symbol)
+    array = my_inject_check_arguments(start, symbol, self)
 
     array.length.times do |i|
-      next if i.zero?
-
-      accumulated = block.yield(accumulated, array[i])
+      start = block.yield(start, array[i])
     end
-    accumulated
+    start
   end
 
   def multiply_els
@@ -246,8 +252,6 @@ module Enumerable
   end
 end
 
-# my_count is returning nil instead of the number of elements in the enum when no block or argument is given.
+a = [true, false, false]
 
-a = [1, 2, 3]
-
-
+p a.my_none?
