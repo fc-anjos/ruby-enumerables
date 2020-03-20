@@ -202,9 +202,20 @@ module Enumerable
     block = start.to_proc if start.is_a?(Symbol)
     block = symbol.to_proc if symbol.is_a?(Symbol)
     start = symbol if start.is_a?(Symbol)
-    array = my_inject_check_arguments(start, symbol, self)
+
+    if self.is_a?(Range)
+      array = self.to_a
+    end
+
+    unless block_given?
+      return my_inject_check_arguments(start, symbol, self)
+    end
 
     array.length.times do |i|
+      if start.nil?
+        start = array[0]
+        next
+      end
       start = block.yield(start, array[i])
     end
     start
@@ -214,6 +225,7 @@ module Enumerable
     my_inject { |result, element| result * element }
   end
 end
+
 module Enumerable
   def my_none_argument(argument)
     length.times do |i|
@@ -251,6 +263,13 @@ module Enumerable
   end
 end
 
-a = [true, false, false]
 
-p a.my_none?
+p (5..10).my_inject { |sum, n| sum + n }
+p (5..10).inject { |sum, n| sum + n }
+
+# p (5..10).my_inject(1) { |product, n| product * n }
+# p (5..10).inject(1) { |product, n| product * n }
+
+# p (5..10).inject(nil) { |product, n| product * n }
+# p (5..10).my_inject(nil) { |product, n| product * n }
+
