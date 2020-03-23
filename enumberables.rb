@@ -52,7 +52,7 @@ end
 
 module Enumerable
   def my_each
-    return to_enum unless block_given?
+    return to_enum(:my_each) unless block_given?
 
     length.times do |i|
       yield(self[i])
@@ -61,22 +61,16 @@ module Enumerable
   end
 
   def my_each_with_index
-    if block_given?
-      length.times do |i|
-        yield self[i], i
-      end
-      self
-    else
-      a = []
-      length.times do |i|
-        a.push [self[i], i]
-      end
-      a.to_enum
+    return to_enum(:my_each_with_index) unless block_given?
+
+    length.times do |i|
+      yield self[i], i
     end
+    self
   end
 
   def my_select
-    return to_enum unless block_given?
+    return to_enum(:my_select) unless block_given?
 
     selected = []
     length.times do |i|
@@ -174,7 +168,7 @@ module Enumerable
   end
 
   def my_map(proc = nil)
-    return to_enum unless block_given?
+    return to_enum(:my_map) unless block_given?
 
     array = []
     unless proc.nil?
@@ -258,4 +252,3 @@ module Enumerable
     end
   end
 end
-
