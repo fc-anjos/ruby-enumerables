@@ -190,40 +190,36 @@ module Enumerable
   end
 
   def my_inject_check_arguments(start, symbol, array)
-    raise TypeError, " #{start} is not a Symbol nor a String" unless (start.is_a?(Symbol) || start.is_a?(String)) ||
-                                                                     (symbol.is_a?(Symbol) || symbol.is_a?(String))
+    raise TypeError, " #{start} is not a Symbol nor a String" unless
+          (start.is_a?(Symbol) || start.is_a?(String)) ||
+          (symbol.is_a?(Symbol) || symbol.is_a?(String))
 
     return array unless array.is_a?(Range)
 
     array.to_a
   end
 
-  def my_inject(start = nil, symbol = nil, &block)
+  BLANK_VALUE = Object.new
+
+  def my_inject(start = BLANK_VALUE, symbol = nil, &block)
     block = start.to_proc if start.is_a?(Symbol)
     block = symbol.to_proc if symbol.is_a?(Symbol)
     start = symbol if start.is_a?(Symbol)
 
-    if self.is_a?(Range)
-      array = self.to_a
-    end
+    array = if is_a?(Range)
+              to_a
+            else
+              self
+            end
 
-    unless block_given?
-      return my_inject_check_arguments(start, symbol, self)
-    end
+    array.my_each { |item| start = start == BLANK_VALUE ? item : block.yield(start, item) }
 
-    array.length.times do |i|
-      if start.nil?
-        start = array[0]
-        next
-      end
-      start = block.yield(start, array[i])
-    end
     start
   end
+end
 
-  def multiply_els
-    my_inject { |result, element| result * element }
-  end
+def multiply_els
+  my_inject { |result, element| result * element }
 end
 
 module Enumerable
@@ -262,14 +258,4 @@ module Enumerable
     end
   end
 end
-
-
-p (5..10).my_inject { |sum, n| sum + n }
-p (5..10).inject { |sum, n| sum + n }
-
-# p (5..10).my_inject(1) { |product, n| product * n }
-# p (5..10).inject(1) { |product, n| product * n }
-
-# p (5..10).inject(nil) { |product, n| product * n }
-# p (5..10).my_inject(nil) { |product, n| product * n }
 
