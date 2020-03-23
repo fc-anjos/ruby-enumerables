@@ -183,28 +183,22 @@ module Enumerable
     array
   end
 
-  def my_inject_check_arguments(start, symbol, array)
-    raise TypeError, " #{start} is not a Symbol nor a String" unless
-          (start.is_a?(Symbol) || start.is_a?(String)) ||
-          (symbol.is_a?(Symbol) || symbol.is_a?(String))
-
-    return array unless array.is_a?(Range)
-
-    array.to_a
+  def range_to_a(array)
+    array = to_a if is_a?(Range)
+    array
   end
 
   BLANK_VALUE = Object.new
 
   def my_inject(start = BLANK_VALUE, symbol = nil, &block)
-    block = start.to_proc if start.is_a?(Symbol)
-    block = symbol.to_proc if symbol.is_a?(Symbol)
-    start = symbol if start.is_a?(Symbol)
+    array = range_to_a(self)
+    if start.is_a?(Symbol) && symbol.nil?
+      block = start.to_proc
+      start = BLANK_VALUE
 
-    array = if is_a?(Range)
-              to_a
-            else
-              self
-            end
+    elsif symbol.is_a?(Symbol) && start != BLANK_VALUE
+      block = symbol.to_proc
+    end
 
     array.my_each { |item| start = start == BLANK_VALUE ? item : block.yield(start, item) }
 
