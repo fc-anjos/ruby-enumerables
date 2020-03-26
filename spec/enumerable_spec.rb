@@ -117,20 +117,37 @@ RSpec.describe Enumerable do
     end
   end
 
-  #   MY_MAP
   describe '#my_select' do
+    a = [1, 2, 3, 4, 5]
+    it 'Returns an array containing all elements of enum for which the given block returns a true value.' do
+      expect(a.select(&:even?)).to eql(a.my_select(&:even?))
+    end
+
+    it 'If no block is given, an Enumerator is returned instead.' do
+      expect(a.select.to_a).to eql(a.my_select.to_a)
+    end
+  end
+
+  describe '#my_map' do
     it 'Returns a new array with the results of running block once for every element in enum.' do
       expect((1..4).map { |i| i * i }).to eql((1..4).my_map { |i| i * i })
     end
-    # it do
-    # end
   end
 
-  #   MY_INJECT
-  describe '#my_select' do
-    it do
+  describe '#my_inject' do
+    it 'Combines all elements of enum by applying a binary operation, ' \
+       'specified by a block or a symbol that names a method or operator.' \
+       'If you specify a block,' \
+       'then for each element in enum the block is passed an accumulator value (memo) and the element.' do
+      expect((5..10).inject { |sum, n| sum + n }).to eql((5..10).my_inject { |sum, n| sum + n })
     end
-    it do
+
+    it 'If you specify a symbol instead, then each element in the collection will be passed to the named method of memo. ' do
+      expect((5..10).reduce(1, :+)).to eql((5..10).my_inject(1, :+))
+    end
+
+    it 'If you do not explicitly specify an initial value for memo, then the first element of collection is used as the initial value of memo.' do
+      expect((5..10).reduce(:+)).to eql((5..10).my_inject(:+))
     end
   end
 
