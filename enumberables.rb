@@ -205,12 +205,11 @@ module Enumerable
 
     start
   end
-end
 
-def multiply_els
-  my_inject { |result, element| result * element }
+  def multiply_els
+    my_inject { |result, element| result * element }
+  end
 end
-
 module Enumerable
   def my_none_argument(argument)
     length.times do |i|
@@ -247,3 +246,6 @@ module Enumerable
     end
   end
 end
+
+a = [2, 4, 5]
+p a.multiply_els

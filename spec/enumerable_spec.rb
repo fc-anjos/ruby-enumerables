@@ -142,20 +142,22 @@ RSpec.describe Enumerable do
       expect((5..10).inject { |sum, n| sum + n }).to eql((5..10).my_inject { |sum, n| sum + n })
     end
 
-    it 'If you specify a symbol instead, then each element in the collection will be passed to the named method of memo. ' do
+    it 'If you specify a symbol instead, ' \
+       'then each element in the collection will be passed to the named method of memo. ' do
       expect((5..10).reduce(1, :+)).to eql((5..10).my_inject(1, :+))
     end
 
-    it 'If you do not explicitly specify an initial value for memo, then the first element of collection is used as the initial value of memo.' do
+    it 'If you do not explicitly specify an initial value for memo, ' \
+       'then the first element of collection is used as the initial value of memo.' do
       expect((5..10).reduce(:+)).to eql((5..10).my_inject(:+))
     end
   end
 
   #   MULTIPLY_ELS
-  describe '#my_select' do
-    it do
-    end
-    it do
+  describe '#multiply_els' do
+    it 'Multiplies all the elements of the array together by using #my_inject' do
+      a = [2, 4, 5]
+      expect(a.multiply_els).to eql(a.inject(:*))
     end
   end
 end
