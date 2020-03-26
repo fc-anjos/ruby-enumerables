@@ -1,11 +1,13 @@
 require '../enumberables'
 
+# All tests are based on official documentation, found at https://ruby-doc.org/core-2.4.1/Array.html
+
 RSpec.describe Enumerable do
   describe '#my_each' do
     it 'Calls the given block once for each element in self ' \
        'passing that element as a parameter. Returns the array itself.' do
       a = %w[a b c]
-      expect(a.my_each { |x| x }).to eql(a.each { |x| x })
+      expect(a.my_each { |x| }).to eql(a.each { |x| })
     end
 
     it 'If no block is given, an Enumerator is returned.' do
@@ -153,7 +155,6 @@ RSpec.describe Enumerable do
     end
   end
 
-  #   MULTIPLY_ELS
   describe '#multiply_els' do
     it 'Multiplies all the elements of the array together by using #my_inject' do
       a = [2, 4, 5]

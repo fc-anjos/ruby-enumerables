@@ -246,6 +246,3 @@ module Enumerable
     end
   end
 end
-
-a = [2, 4, 5]
-p a.multiply_els
