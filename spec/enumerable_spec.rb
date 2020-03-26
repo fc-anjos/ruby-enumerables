@@ -61,6 +61,81 @@ RSpec.describe Enumerable do
       expect(a.all?).to eql(a.my_all?)
     end
 
+    it 'and return false when none of the collection members are false or nil.' do
+      a = [true, 1]
+      expect(a.all?).to eql(a.my_all?)
+    end
+
+    it 'If instead a pattern is supplied, ' \
+       'the method returns whether pattern === element for every collection member.' do
+      a = %w[ant cat bear]
+      expect(a.all?(/t/)).to eql(a.my_all?(/t/))
+    end
+  end
+
+  describe '#my_any' do
+    it 'Passes each element of the collection to the given block. ' \
+       'The method returns true if the block ever returns a value other than false or nil. ' do
+      a = %w[ant bear cat]
+      expect(a.any? { |word| word.length >= 3 }).to eql(a.my_any? { |word| word.length >= 3 })
+    end
+
+    it 'If the block is not given, Ruby adds an implicit block of { |obj| obj }' \
+       'which will cause any? to return true if at least one of the collection members is not false or nil.' do
+      a = [nil, true, 99]
+      expect(a.any?).to eql(a.my_any?)
+    end
+
+    it 'and return false if all of the members are false or nil' do
+      a = [nil, false]
+      expect(a.any?).to eql(a.my_any?)
+    end
+
+    it 'If instead a pattern is supplied, ' \
+       'the method returns whether pattern === element for any collection member.' do
+      a = %w[ant cat bear]
+      expect(a.any?(/d/)).to eql(a.my_any?(/d/))
+    end
+  end
+
+  describe '#my_none' do
+    it 'Passes each element of the collection to the given block. ' \
+       'The method returns true if the block never returns true for all elements.' do
+      a = %w[ant bear cat]
+      expect(a.none? { |word| word.length == 5 }).to eql(a.my_none? { |word| word.length == 5 })
+    end
+
+    it 'If the block is not given, none? will return true only if none of the collection members is true.' do
+      a = [nil]
+      expect(a.none?).to eql(a.my_none?)
+    end
+
+    it 'and return false if any of the collection members is true' do
+      a = [1, nil]
+      expect(a.none?).to eql(a.my_none?)
+    end
+
+    it 'If instead a pattern is supplied, ' \
+       'the method returns whether pattern === element for none of the collection members.' do
+      a = %w[ant cat bear]
+      expect(a.none?(/d/)).to eql(a.my_none?(/d/))
+    end
+  end
+
+  describe '#my_count' do
+    ary = [1, 2, 3, 4]
+
+    it 'Returns the number of items in enum through enumeration. ' \
+      'If an argument is given, the number of items in enum that are equal to item are counted.' do
+      expect(ary.count(2)).to eql(ary.my_count(2))
+    end
+
+    it ' If a block is given, it counts the number of elements yielding a true value.' do
+      expect(ary.count(&:even?)).to eql(ary.my_count(&:even?))
+    end
+  end
+
+  describe '#my_select' do
     it 'If instead a pattern is supplied, ' \
        'the method returns whether pattern === element for every collection member.' do
       a = %w[ant cat bear]
@@ -87,7 +162,6 @@ RSpec.describe Enumerable do
     end
   end
 
-  #   MY_NONE
   describe '#my_none' do
     it 'Passes each element of the collection to the given block. ' \
        'The method returns true if the block never returns true for all elements.' do
