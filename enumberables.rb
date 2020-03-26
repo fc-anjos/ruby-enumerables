@@ -168,19 +168,20 @@ module Enumerable
   end
 
   def my_map(proc = nil)
+    input = range_to_a(self)
     return to_enum(:my_map) unless block_given?
 
-    array = []
+    output = []
     unless proc.nil?
-      length.times do |i|
-        array.push proc.call(self[i])
+      input.length.times do |i|
+        output.push proc.call(input[i])
       end
     end
 
-    length.times do |i|
-      array.push yield(self[i])
+    input.length.times do |i|
+      output.push yield(input[i])
     end
-    array
+    output
   end
 
   def range_to_a(array)
