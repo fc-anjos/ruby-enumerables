@@ -6,6 +6,11 @@ An implementation of the [enumerable methods](https://www.theodinproject.com/cou
     ruby 
     bundler
     linted with rubocop
+    tested with rspec
+    
+## Test it
+    To run the tests locally, run rspec from the project's root
+
 
 <!-- AUTHORS -->
 ## Implemented By:
