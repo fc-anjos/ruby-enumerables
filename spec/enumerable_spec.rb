@@ -71,6 +71,17 @@ RSpec.describe Enumerable do
       a = %w[ant cat bear]
       expect(a.all?(/t/)).to eql(a.my_all?(/t/))
     end
+
+    it 'Should also work with classes as arguments' do
+      a = [1, 2, 3]
+      expect(a.all?(Integer)).to eql(a.my_all?(Integer))
+      expect(a.all?(String)).to eql(a.my_all?(String))
+    end
+
+    it 'And patterns that are not regexes' do
+      a = [1, 2, 3]
+      expect(a.all?(3)).to eql(a.my_all?(3))
+    end
   end
 
   describe '#my_any' do
@@ -96,6 +107,18 @@ RSpec.describe Enumerable do
       a = %w[ant cat bear]
       expect(a.any?(/d/)).to eql(a.my_any?(/d/))
     end
+
+    it 'Should also work with classes as arguments' do
+      a = [1, 2, 3]
+      expect(a.any?(Integer)).to eql(a.my_any?(Integer))
+      expect(a.any?(String)).to eql(a.my_any?(String))
+    end
+
+    it 'And patterns that are not regexes' do
+      a = [1, 2, 3]
+      expect(a.any?(3)).to eql(a.my_any?(3))
+      expect(a.any?(4)).to eql(a.my_any?(4))
+    end
   end
 
   describe '#my_none' do
@@ -120,6 +143,18 @@ RSpec.describe Enumerable do
       a = %w[ant cat bear]
       expect(a.none?(/d/)).to eql(a.my_none?(/d/))
     end
+
+    it 'Should also work with classes as arguments' do
+      a = [1, 2, 3]
+      expect(a.none?(Integer)).to eql(a.my_none?(Integer))
+      expect(a.none?(String)).to eql(a.my_none?(String))
+    end
+
+    it 'And patterns that are not regexes' do
+      a = [1, 2, 3]
+      expect(a.none?(3)).to eql(a.my_none?(3))
+      expect(a.none?(4)).to eql(a.my_none?(4))
+    end
   end
 
   describe '#my_count' do
@@ -134,15 +169,6 @@ RSpec.describe Enumerable do
       expect(ary.count(&:even?)).to eql(ary.my_count(&:even?))
     end
   end
-
-  describe '#my_select' do
-    it 'If instead a pattern is supplied, ' \
-       'the method returns whether pattern === element for every collection member.' do
-      a = %w[ant cat bear]
-      expect(a.all?(/t/)).to eql(a.my_all?(/t/))
-    end
-  end
-
   describe '#my_any' do
     it 'Passes each element of the collection to the given block. ' \
        'The method returns true if the block ever returns a value other than false or nil. ' do
