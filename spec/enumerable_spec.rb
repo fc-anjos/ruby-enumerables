@@ -1,4 +1,4 @@
-require '../enumberables'
+require_relative '../enumerables'
 
 # All tests are based on official documentation, found at https://ruby-doc.org/core-2.4.1/Array.html
 
