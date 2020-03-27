@@ -110,7 +110,7 @@ RSpec.describe Enumerable do
       expect(a.none?).to eql(a.my_none?)
     end
 
-    it 'and return false if any of the collection members is true' do
+    it 'and return false if at least one of the collection members is true' do
       a = [1, nil]
       expect(a.none?).to eql(a.my_none?)
     end
@@ -149,9 +149,15 @@ RSpec.describe Enumerable do
       a = %w[ant bear cat]
       expect(a.any? { |word| word.length >= 3 }).to eql(a.my_any? { |word| word.length >= 3 })
     end
+
     it 'If the block is not given, Ruby adds an implicit block of { |obj| obj }' \
        'which will cause any? to return true if at least one of the collection members is not false or nil.' do
       a = [nil, true, 99]
+      expect(a.any?).to eql(a.my_any?)
+    end
+
+    it 'and return false if none of the collection members is not false or not nil' do
+      a = [false, nil]
       expect(a.any?).to eql(a.my_any?)
     end
 
